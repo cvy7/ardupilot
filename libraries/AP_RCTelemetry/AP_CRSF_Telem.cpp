@@ -215,7 +215,7 @@ void AP_CRSF_Telem::queue_message(MAV_SEVERITY severity, const char *text)
     }
     AP_RCTelemetry::queue_message(severity, text);
 }
-
+/*
 void AP_CRSF_Telem::enter_scheduler_params_mode()
 {
     set_scheduler_entry(HEARTBEAT, 50, 100);            // heartbeat        10Hz
@@ -226,6 +226,20 @@ void AP_CRSF_Telem::enter_scheduler_params_mode()
 
     disable_scheduler_entry(PASSTHROUGH);
     disable_scheduler_entry(STATUS_TEXT);
+}
+*/
+void AP_CRSF_Telem::enter_scheduler_params_mode()
+{
+    set_scheduler_entry(HEARTBEAT, 50, 100);            // heartbeat        10Hz
+    set_scheduler_entry(ATTITUDE, 50, 120);             // Attitude and compass 8Hz
+    set_scheduler_entry(BATTERY, 1300, 500);            // battery           2Hz
+    set_scheduler_entry(GPS, 550, 280);                 // GPS               3Hz
+    set_scheduler_entry(FLIGHT_MODE, 550, 500);         // flight mode       2Hz
+    set_scheduler_entry(PASSTHROUGH, 500, 3000);      // 0.3Hz
+    set_scheduler_entry(STATUS_TEXT, 600, 2000);      // 0.5Hz
+
+    enable_scheduler_entry(PASSTHROUGH);
+    enable_scheduler_entry(STATUS_TEXT);
 }
 
 void AP_CRSF_Telem::exit_scheduler_params_mode()
@@ -241,6 +255,8 @@ void AP_CRSF_Telem::exit_scheduler_params_mode()
 
     update_custom_telemetry_rates(_telem_rf_mode);
 }
+
+
 
 void AP_CRSF_Telem::adjust_packet_weight(bool queue_empty)
 {
@@ -261,7 +277,7 @@ void AP_CRSF_Telem::adjust_packet_weight(bool queue_empty)
     } else if (expired && _custom_telem.params_mode_active) {
         // fast window stop
         _custom_telem.params_mode_active = false;
-        exit_scheduler_params_mode();
+        //exit_scheduler_params_mode();
     }
 }
 
@@ -723,7 +739,7 @@ void AP_CRSF_Telem::calc_flight_mode()
 {
     AP_Notify * notify = AP_Notify::get_singleton();
     if (notify) {
-        hal.util->snprintf(_telem.bcast.flightmode.flight_mode, 16, "%s", notify->get_flight_mode_str());
+        hal.util->snprintf(_telem.bcast.flightmode.flight_mode, 8, "%s", notify->get_flight_mode_str());
 
         _telem_size = sizeof(AP_CRSF_Telem::FlightModeFrame);
         _telem_type = AP_RCProtocol_CRSF::CRSF_FRAMETYPE_FLIGHT_MODE;

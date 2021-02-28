@@ -109,7 +109,7 @@ public:
     };
 
     struct PACKED FlightModeFrame {
-        char flight_mode[16]; // ( Null-terminated string )
+        char flight_mode[8]; // ( Null-terminated string )
     };
 
     // CRSF_FRAMETYPE_COMMAND
